@@ -20,7 +20,7 @@ process.on('exit', () => {
 request({
   url: 'https://api.github.com/users/vuejs-templates/repos',
   headers: {
-    'User-Agent': 'simple-cli'
+    'User-Agent': 'varied-cli'
   }
 }, (err, res, body) => {
   if (err) logger.fatal(err)

@@ -91,8 +91,8 @@ const to = path.resolve(rawName || '.');
 // 检查参数是否clone
 const clone = program.clone || false;
 // path.join（）:使用平台特定分隔符,将所有给定的路径连接在一起,然后对结果路径进行规范化
-// 如 ： /Users/admin/.simple-templates/webpack
-const tmp = path.join(home, '.simple-templates', template.replace(/[\/:]/g, '-'));
+// 如 ： /Users/admin/.varied-templates/webpack
+const tmp = path.join(home, '.varied-templates', template.replace(/[\/:]/g, '-'));
 // 是否线下：如果是线下，直接使用当前地址,否则去线上仓库下载
 // if (program.offline) {
 //     console.log(`> Use cached template at ${chalk.yellow(tildify(tmp))}`)
