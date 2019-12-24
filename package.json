@@ -1,0 +1,47 @@
+{
+  "name": "@varied/cli",
+  "version": "0.0.13",
+  "description": "一款vue脚手架",
+  "author": "Heath",
+  "private": false,
+  "scripts": {
+    "publish": "npm publish --access=public"
+  },
+  "bin": {
+    "varied": "bin/varied",
+    "varied-init": "bin/varied-init",
+    "varied-list": "bin/varied-list"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "async": "^3.1.0",
+    "chalk": "^3.0.0",
+    "commander": "^4.0.1",
+    "consolidate": "^0.15.1",
+    "download-git-repo": "^3.0.2",
+    "handlebars": "^4.5.3",
+    "inquirer": "^7.0.1",
+    "metalsmith": "^2.3.0",
+    "multimatch": "^4.0.0",
+    "ora": "^4.0.3",
+    "read-metadata": "^1.0.0",
+    "rimraf": "^3.0.0",
+    "user-home": "^2.0.0",
+    "validate-npm-package-name": "^3.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "homepage": "https://github.com/HeathHwn/varied-cli",
+  "keywords": [
+    "varied",
+    "cli"
+  ],
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HeathHwn/varied-cli"
+  },
+  "license": "MIT"
+}

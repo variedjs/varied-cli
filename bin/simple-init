@@ -1,0 +1,205 @@
+#!/usr/bin/env node
+
+// 从仓库下载代码-GitHub，GitLab，Bitbucket
+const download = require('download-git-repo');
+// 创建子命令，切割命令行参数并执行
+const program = require('commander');
+// 检查文件是否存在
+const exists = require('fs').existsSync;
+// 路径模块
+const path = require('path');
+// loading
+const ora = require('ora');
+// 获取主目录路径
+const home = require('user-home');
+// 绝对路径转换为相对路径
+// const tildify = require('tildify');
+// 命令行字体颜色
+const chalk = require('chalk');
+// 交互式命令行,可在控制台提问
+const inquirer = require('inquirer');
+// 包装rm -rf命令,删除文件和文件夹
+const rm = require('rimraf').sync;
+// 日志
+const logger = require('../lib/logger');
+// 自动生成
+const generate = require('../lib/generate');
+// 检查版本
+// const checkVersion = require('../lib/check-version')
+// // 警告
+// const warnings = require('../lib/warnings')
+// const localPath = require('../lib/local-path')
+//
+// // 是否本地方法
+// const isLocalPath = localPath.isLocalPath
+// // 模板路径方法
+// const getTemplatePath = localPath.getTemplatePath
+
+/**
+ * Usage.
+ * 从命令中获取参数
+ * program.args[0]    模板类型
+ * program.args[1]    自定义项目名称
+ * program.clone        clone
+ * program.offline    离线
+ */
+program
+    .usage('<template-name> [project-name]')
+    .option('-c, --clone', 'use git clone')
+    .option('--offline', 'use cached template');
+
+/**
+ * Help.
+ */
+program.on('--help', () => {
+    console.log('  Examples:');
+    console.log();
+    console.log(chalk.gray('    # create a new project with an official template'));
+    console.log('    $ vue init webpack my-project');
+    console.log();
+    // console.log(chalk.gray('    # create a new project straight from a github template'))
+    // console.log('    $ vue init username/repo my-project')
+    // console.log()
+});
+
+/**
+ * Help.
+ */
+function help() {
+    program.parse(process.argv);
+    if (program.args.length < 1) return program.help()
+}
+
+help();
+
+/**
+ * Settings.
+ */
+// 模板类型：获取第一个参数，如：webpack
+let template = program.args[0];
+// 是否有“/”符号
+// const hasSlash = template.indexOf('/') > -1
+// 自定义项目名称，如：my-project
+const rawName = program.args[1];
+
+// rawName存在或者为“.”的时候，视为在当前目录下构建
+const inPlace = !rawName || rawName === '.';
+// path.relative（）:根据当前工作目录返回相对路径
+const name = inPlace ? path.relative('../', process.cwd()) : rawName;
+// 合并路径
+const to = path.resolve(rawName || '.');
+// 检查参数是否clone
+const clone = program.clone || false;
+// path.join（）:使用平台特定分隔符,将所有给定的路径连接在一起,然后对结果路径进行规范化
+// 如 ： /Users/admin/.simple-templates/webpack
+const tmp = path.join(home, '.simple-templates', template.replace(/[\/:]/g, '-'));
+// 是否线下：如果是线下，直接使用当前地址,否则去线上仓库下载
+// if (program.offline) {
+//     console.log(`> Use cached template at ${chalk.yellow(tildify(tmp))}`)
+//     // 设置为离线地址
+//     template = tmp
+// }
+
+/**
+ * Padding.
+ */
+process.on('exit', () => {
+    console.log()
+});
+
+// 目录存在时询问，通过后执行run函数，否则直接执行run函数
+if (inPlace || exists(to)) {
+    inquirer.prompt([{
+        type: 'confirm',
+        message: inPlace
+            // 是否在当前目录下构建项目
+            ? 'Generate project in current directory?'
+            // 构建目录已存在,是否继续
+            : 'Target directory exists. Continue?',
+        name: 'ok'
+    }]).then(answers => {
+        if (answers.ok) {
+            run()
+        }
+    }).catch(logger.fatal)
+} else {
+    run()
+}
+
+/**
+ * Check, download and generate the project.
+ */
+function run() {
+    let officialTemplate = 'github:HeathHwn/' + template;
+    downloadAndGenerate(officialTemplate)
+    // 本地模板
+    // if (isLocalPath(template)) {
+    //     // 获取绝对路径
+    //     const templatePath = getTemplatePath(template)
+    //     // 存在-使用本地模板生成
+    //     if (exists(templatePath)) {
+    //         generate(name, templatePath, to, err => {
+    //             if (err) logger.fatal(err)
+    //             console.log()
+    //             logger.success('Generated "%s".', name)
+    //         })
+    //         // 本地模板不存在-报错
+    //     } else {
+    //         logger.fatal('Local template "%s" not found.', template)
+    //     }
+    //     // 非本地模板
+    // } else {
+    //     // 版本检查
+    //     checkVersion(() => {
+    //         // 不包含“/”，去官网下载
+    //         if (!hasSlash) {
+    //             // use official templates
+    //             const officialTemplate = 'vuejs-templates/' + template
+    //             // 模板名是否带"#"
+    //             if (template.indexOf('#') !== -1) {
+    //                 downloadAndGenerate(officialTemplate)
+    //             } else {
+    //                 if (template.indexOf('-2.0') !== -1) {
+    //                     warnings.v2SuffixTemplatesDeprecated(template, inPlace ? '' : name)
+    //                     return
+    //                 }
+    //                 // warnings.v2BranchIsNowDefault(template, inPlace ? '' : name)
+    //                 // 下载官方模板
+    //                 downloadAndGenerate(officialTemplate)
+    //             }
+    //             // 包含“/”，去自己的仓库下载
+    //         } else {
+    //             downloadAndGenerate(template)
+    //         }
+    //     })
+    // }
+}
+
+/**
+ * Download a generate from a template repo.
+ * 从模板仓库下载代码
+ * @param {String} template
+ */
+function downloadAndGenerate(template) {
+    // loading
+    const spinner = ora('downloading template')
+    spinner.start()
+
+    // Remove if local template exists
+    if (exists(tmp)) rm(tmp)
+
+    // download-git-repo：从仓库下载代码-GitHub，GitLab，Bitbucket
+    // template:模板名	tmp:模板路径	clone:是否采用git clone模板   err：错误信息
+    download(template, tmp, {clone}, err => {
+        spinner.stop()
+        // error!!
+        if (err) logger.fatal('Failed to download repo ' + template + ': ' + err.message.trim())
+        generate(name, tmp, to, err => {
+            // error!!
+            if (err) logger.fatal(err)
+            console.log()
+            // success
+            logger.success('Generated "%s".', name)
+        })
+    })
+}
