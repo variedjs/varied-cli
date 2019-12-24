@@ -2,20 +2,18 @@
 
 脚手架命令行工具
 
-## 全局安装
+## 方法一：全局安装
 ```
 npm install @varied/cli -g
 ```
-## 命令
-* `init` 创建
-
-## 参数配置
-* `-c`, `--clone`  用 `git clone` 的方式去获取模板
-
-## 模板
-
+## 方法二：全局安装---淘宝镜像（一次性）
+```
+npm --registry https://registry.npm.taobao.org install @varied/cli -g
+```
 
 ## 使用
 ```
+varied init <template-name> <project-name>
+示例：
 varied init webpack myproject
 ```
