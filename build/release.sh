@@ -17,7 +17,7 @@ then
   git commit -am $TEXT
 
   # publish
-  git push
   npm publish --access=public
+  git push
   fi
 fi

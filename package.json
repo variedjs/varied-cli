@@ -1,13 +1,12 @@
 {
   "name": "@varied/cli",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "一款vue脚手架",
   "author": "Heath",
   "private": false,
   "bin": {
     "varied": "bin/varied",
-    "varied-init": "bin/varied-init",
-    "varied-list": "bin/varied-list"
+    "varied-init": "bin/varied-init"
   },
   "bundleDependencies": false,
   "dependencies": {
@@ -30,7 +29,7 @@
   "engines": {
     "node": ">=6.0.0"
   },
-  "homepage": "https://github.com/HeathHwn/varied-cli",
+  "homepage": "https://github.com/variedjs/varied-cli",
   "keywords": [
     "varied",
     "cli"
@@ -38,7 +37,7 @@
   "preferGlobal": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HeathHwn/varied-cli"
+    "url": "git+https://github.com/variedjs/varied-cli"
   },
   "license": "MIT"
 }
