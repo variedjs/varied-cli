@@ -130,7 +130,7 @@ if (inPlace || exists(to)) {
  * Check, download and generate the project.
  */
 function run() {
-    let officialTemplate = 'github:HeathHwn/' + template;
+    let officialTemplate = 'github:varied-templates/' + template;
     downloadAndGenerate(officialTemplate)
     // 本地模板
     // if (isLocalPath(template)) {
