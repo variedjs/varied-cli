@@ -1,12 +1,9 @@
 {
   "name": "@varied/cli",
-  "version": "0.0.14",
+  "version": "0.0.16",
   "description": "一款vue脚手架",
   "author": "Heath",
   "private": false,
-  "scripts": {
-    "publish": "npm publish --access=public"
-  },
   "bin": {
     "varied": "bin/varied",
     "varied-init": "bin/varied-init",
